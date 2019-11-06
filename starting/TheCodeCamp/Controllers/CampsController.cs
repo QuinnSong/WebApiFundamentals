@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,22 @@ namespace TheCodeCamp.Controllers
                 var result = await _repository.GetCampAsync(moniker, includeTalks);
                 if (result == null) return NotFound();
                 return Ok(_mapper.Map<CampModel>(result));
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("searchByDate/{eventDate:datetime}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> SearchByEventDate(DateTime eventDate, bool includeTalks = false)
+        {
+            try
+            {
+                //var dt = DateTime.ParseExact(eventDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var result = await _repository.GetAllCampsByEventDate(eventDate, includeTalks);
+                return Ok(_mapper.Map <CampModel[]>(result));
             }
             catch (Exception ex)
             {
