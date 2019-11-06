@@ -71,5 +71,18 @@ namespace TheCodeCamp.Controllers
                 return InternalServerError(ex);
             }
         }
+        [Route()]
+        public async Task<IHttpActionResult> Post(CampModel model)
+        {
+            try
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                return InternalServerError(ex);
+            }
+        }
     }
 }
