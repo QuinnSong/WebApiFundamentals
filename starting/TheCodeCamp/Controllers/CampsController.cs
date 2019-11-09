@@ -64,7 +64,7 @@ namespace TheCodeCamp.Controllers
             {
                 //var dt = DateTime.ParseExact(eventDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                 var result = await _repository.GetAllCampsByEventDate(eventDate, includeTalks);
-                return Ok(_mapper.Map <CampModel[]>(result));
+                return Ok(_mapper.Map<CampModel[]>(result));
             }
             catch (Exception ex)
             {
@@ -101,6 +101,57 @@ namespace TheCodeCamp.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+        [Route("{moniker}")]
+        public async Task<IHttpActionResult> Put(string moniker, CampModel model)
+        {
+            try
+            {
+                var camp = await _repository.GetCampAsync(moniker);
+                if (camp == null) return NotFound();
+
+                _mapper.Map(model, camp);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok(_mapper.Map<CampModel>(camp));
+                }
+                else
+                {
+                    return InternalServerError();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("{moniker}")]
+        public async Task<IHttpActionResult> Delete(string moniker)
+        {
+            try
+            {
+                var camp = await _repository.GetCampAsync(moniker);
+                if (camp == null) return NotFound();
+
+                _repository.DeleteCamp(camp);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return InternalServerError();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
     }
 }
